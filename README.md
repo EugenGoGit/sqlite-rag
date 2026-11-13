@@ -110,6 +110,15 @@ SQLite RAG supports the following file formats:
 - **Code**: `.c`, `.cpp`, `.css`, `.go`, `.h`, `.hpp`, `.html`, `.java`, `.js`, `.mjs`, `.kt`, `.php`, `.py`, `.rb`, `.rs`, `.swift`, `.ts`, `.tsx`
 - **Web Frameworks**: `.svelte`, `.vue`
 
+### Custom File Extensions
+
+You can customize the list of supported file extensions using the `--supported-extensions` option:
+
+```bash
+# Set the supported extensions list
+sqlite-rag configure --supported-extensions "py,js,c4"
+```
+
 ## Development
 
 ### Installation
