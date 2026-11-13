@@ -18,6 +18,7 @@ SQLite RAG combines vector similarity search with full-text search ([FTS5](https
 - **Recursive Character Text Splitter**: Token-aware text chunking with configurable overlap
 - **Interactive CLI**: Command-line interface with interactive REPL mode
 - **Flexible Configuration**: Customizable embedding models, search weights, and chunking parameters
+- **Continue Integration**: MCP server for seamless integration with VS Code Continue extension
 
 ## Installation
 
@@ -119,6 +120,74 @@ You can customize the list of supported file extensions using the `--supported-e
 sqlite-rag configure --supported-extensions "py,js,c4"
 ```
 
+## Continue Integration
+
+SQLite RAG includes an MCP (Model Context Protocol) server for seamless integration with [VS Code Continue](https://docs.continue.dev/) extension. This allows you to use your SQLite RAG database directly in the Continue chat and agent modes.
+
+### Installation
+
+Install SQLite RAG with MCP support:
+
+```bash
+pip install sqlite-rag[mcp]
+```
+
+### Configuration
+
+1. First, set up your SQLite RAG database and add documents as described in the Quick Start section.
+
+2. Create or edit your Continue configuration file `.continue/config.json` in your home directory:
+
+```json
+{
+  "mcpServers": {
+    "sqlite-rag": {
+      "command": "python",
+      "args": [
+        "-m", "sqlite_rag.mcp_server",
+        "/path/to/your/sqliterag.sqlite"
+      ],
+      "env": {}
+    }
+  }
+}
+```
+
+Replace `/path/to/your/sqliterag.sqlite` with the actual path to your SQLite RAG database file.
+
+3. Restart VS Code to load the MCP server.
+
+### Available Tools
+
+Once configured, the following tools will be available in Continue:
+
+- **`search`**: Search your documents using hybrid vector + full-text search
+  - `query` (string): The search query
+  - `limit` (number, optional): Number of results to return (default: 5)
+
+- **`add_text`**: Add text content to the RAG database
+  - `text` (string): The text content to add
+  - `uri` (string, optional): URI/path identifier for the text
+  - `metadata` (string, optional): Metadata in JSON format
+
+- **`list_documents`**: List all documents in the database
+
+- **`remove_document`**: Remove a document by ID or URI
+  - `identifier` (string): Document ID or URI to remove
+
+- **`get_settings`**: Get current configuration settings of the RAG system
+
+### Usage in Continue
+
+After setup, you can use commands like:
+
+```sql
+-- In Continue chat or agent mode
+Search for documents about machine learning with limit 10
+```
+
+or let Continue automatically use the search tool when you ask questions related to your indexed documents.
+
 ## Development
 
 ### Installation
@@ -135,7 +204,7 @@ python3 -m venv .venv
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 
 # Install in development mode
-pip install -e '.[dev]'
+pip install -e '.[dev,mcp]'
 ```
 ## How It Works
 
